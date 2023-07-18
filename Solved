@@ -1,0 +1,224 @@
+Question 1
+A permutation perm of n + 1 integers of all the integers in the range [0, n] can be represented as a string s of length n where:
+
+- s[i] == 'I' if perm[i] < perm[i + 1], and
+- s[i] == 'D' if perm[i] > perm[i + 1].
+
+Given a string s, reconstruct the permutation perm and return it. If there are multiple valid permutations perm, return **any of them**.
+
+Ans - function findPermutation(s) {
+  const n = s.length;
+  const result = new Array(n + 1);
+  
+  let increasing = 1;
+  let decreasing = n;
+  
+  for (let i = 0; i < n; i++) {
+    if (s[i] === 'I') {
+      result[i] = increasing;
+      increasing++;
+    } else {
+      result[i] = decreasing;
+      decreasing--;
+    }
+  }
+  
+  result[n] = increasing;
+  
+  return result;
+}
+
+// Test the function with the given example
+const s = "IDID";
+
+const permutation = findPermutation(s);
+console.log(permutation);
+
+
+Question 2 
+You are given an m x n integer matrix matrix with the following two properties:
+
+- Each row is sorted in non-decreasing order.
+- The first integer of each row is greater than the last integer of the previous row.
+
+Given an integer target, return true *if* target *is in* matrix *or* false *otherwise*.
+
+You must write a solution in O(log(m * n)) time complexity.
+
+Ans - function searchMatrix(matrix, target) {
+  const m = matrix.length;
+  const n = matrix[0].length;
+  
+  let left = 0;
+  let right = m * n - 1;
+  
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const midValue = matrix[Math.floor(mid / n)][mid % n];
+    
+    if (midValue === target) {
+      return true;
+    } else if (midValue < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  
+  return false;
+}
+
+// Test the function with the given example
+const matrix = [[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]];
+const target = 3;
+
+const found = searchMatrix(matrix, target);
+console.log(found);
+
+Question 3 
+Given an array of integers arr, return *true if and only if it is a valid mountain array*.
+
+Recall that arr is a mountain array if and only if:
+
+- arr.length >= 3
+- There exists some i with 0 < i < arr.length - 1 such that:
+    - arr[0] < arr[1] < ... < arr[i - 1] < arr[i]
+    - arr[i] > arr[i + 1] > ... > arr[arr.length - 1]
+
+Ans - function validMountainArray(arr) {
+  const n = arr.length;
+  
+  if (n < 3) {
+    return false;
+  }
+  
+  let i = 0;
+  
+  // Walk up the mountain until reaching the peak
+  while (i < n - 1 && arr[i] < arr[i + 1]) {
+    i++;
+  }
+  
+  // Check if the peak is the first or last element
+  if (i === 0 || i === n - 1) {
+    return false;
+  }
+  
+  // Walk down the mountain from the peak
+  while (i < n - 1 && arr[i] > arr[i + 1]) {
+    i++;
+  }
+  
+  // If the traversal reaches the end, it's a valid mountain array
+  return i === n - 1;
+}
+
+// Test the function with the given example
+const arr = [2, 1];
+
+const isValidMountainArray = validMountainArray(arr);
+console.log(isValidMountainArray);
+
+
+Question 4 
+Given a binary array nums, return *the maximum length of a contiguous subarray with an equal number of* 0 *and* 1.
+
+Ans - function findMaxLength(nums) {
+  const map = new Map();
+  map.set(0, -1);
+  
+  let maxLength = 0;
+  let count = 0;
+  
+  for (let i = 0; i < nums.length; i++) {
+    count += nums[i] === 1 ? 1 : -1;
+    
+    if (map.has(count)) {
+      maxLength = Math.max(maxLength, i - map.get(count));
+    } else {
+      map.set(count, i);
+    }
+  }
+  
+  return maxLength;
+}
+
+// Test the function with the given example
+const nums = [0, 1];
+
+const maxLength = findMaxLength(nums);
+console.log(maxLength);
+
+Question 4
+Given a binary array nums, return the maximum length of a contiguous subarray with an equal number of 0 and 1.
+
+Ans - function findMaxLength(nums) {
+  const map = new Map();
+  map.set(0, -1);
+  
+  let maxLength = 0;
+  let count = 0;
+  
+  for (let i = 0; i < nums.length; i++) {
+    count += nums[i] === 1 ? 1 : -1;
+    
+    if (map.has(count)) {
+      maxLength = Math.max(maxLength, i - map.get(count));
+    } else {
+      map.set(count, i);
+    }
+  }
+  
+  return maxLength;
+}
+
+// Test the function with the given example
+const nums = [0, 1];
+
+const maxLength = findMaxLength(nums);
+console.log(maxLength);
+
+Question 6
+
+An integer array original is transformed into a **doubled** array changed by appending **twice the value** of every element in original, and then randomly **shuffling** the resulting array.
+
+Given an array changed, return original *if* changed *is a **doubled** array. If* changed *is not a **doubled** array, return an empty array. The elements in* original *may be returned in **any** order*.
+
+Ans - function findOriginalArray(changed) {
+  if (changed.length % 2 !== 0) {
+    return [];
+  }
+  
+  const freq = new Map();
+  
+  for (const num of changed) {
+    freq.set(num, (freq.get(num) || 0) + 1);
+  }
+  
+  const original = [];
+  
+  for (const num of changed) {
+    if (freq.get(num) === 0) {
+      continue;
+    }
+    
+    const twiceNum = num * 2;
+    
+    if (freq.get(twiceNum) === 0) {
+      return [];
+    }
+    
+    original.push(num);
+    
+    freq.set(num, freq.get(num) - 1);
+    freq.set(twiceNum, freq.get(twiceNum) - 1);
+  }
+  
+  return original;
+}
+
+// Test the function with the given example
+const changed = [1, 3, 4, 2, 6, 8];
+
+const original = findOriginalArray(changed);
+console.log(original);
